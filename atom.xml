@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Kamil Hussen</title>
+    <link href="https://kamilhussen24.github.io" rel="self"/>
+    <link href="https://kamilhussen24.github.io"/>
+    <updated>2025-02-25T12:00:00Z</updated>
+    <author>
+        <name>Kamil Hussen</name>
+    </author>
+    <id>https://kamilhussen24.github.io</id>
+</feed>
