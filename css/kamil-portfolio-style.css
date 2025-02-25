@@ -149,7 +149,13 @@ strong {
   border-radius: var(--border-radius-small);
   padding: 10px 30px;
 }
-
+.contact-link {
+            color: green; /* Change link color to green */
+            text-decoration: none; /* Remove underline */
+        }
+        .contact-link:hover {
+            text-decoration: underline; /* Add underline on hover */
+	}
 
 /*---------------------------------------
   AVATAR IMAGE               
