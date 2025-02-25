@@ -151,7 +151,7 @@ strong {
 }
 
 .contact-link {
-            color: green; /* Change link color to green */
+            color: #00BA87; /* Change link color to green */
             text-decoration: none; /* Remove underline */
         }
         .contact-link:hover {
