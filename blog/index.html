@@ -6,41 +6,42 @@
     <title>কামিলের ব্লগ</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --hover-color: #3498db;
-            --text-color: #34495e;
-            --background-color: #f8f9fa;
+            --primary-color: #2d3436;
+            --accent-color: #0984e3;
+            --text-color: #2d3436;
+            --muted-color: #636e72;
+            --background-color: #ffffff;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Nirmala UI', 'Segoe UI', sans-serif;
+            font-family: 'Helvetica Neue', 'Segoe UI', sans-serif;
         }
 
         body {
-            background-color: var(--background-color);
+            background-color: #f5f6fa;
             line-height: 1.6;
         }
 
         .container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 1rem 1rem;
+            padding: 1rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 1rem 0;
-            border-bottom: 2px solid #eee;
+            margin: 0rem 0;
+            padding: 2rem 0;
         }
 
         .blog-title {
             color: var(--primary-color);
-            font-size: 2.5rem;
-            letter-spacing: -1px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
 
         .post-list {
@@ -48,25 +49,27 @@
         }
 
         .post-item {
-            background: white;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
+            background: var(--background-color);
+            margin-bottom: 1rem;
+            padding: 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-left: 4px solid transparent;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
 
         .post-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-left-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left-color: var(--accent-color);
         }
 
         .post-title {
             color: var(--primary-color);
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
         }
 
         .post-title a {
@@ -74,43 +77,61 @@
             text-decoration: none;
         }
 
-        .post-title a:hover {
-            color: var(--hover-color);
+        .post-meta {
+            color: var(--muted-color);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 1rem;
         }
 
         .post-excerpt {
-            color: #7f8c8d;
-            font-size: 0.95rem;
-            line-height: 1.8;
+            color: var(--muted-color);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .load-more-btn {
             display: block;
-            width: 200px;
+            width: 100%;
+            max-width: 200px;
             margin: 2rem auto;
-            padding: 12px;
-            background: var(--primary-color);
+            padding: 0.8rem;
+            background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 25px;
-            font-size: 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(9, 132, 227, 0.2);
         }
 
         .load-more-btn:hover {
-            background: var(--hover-color);
+            background: #0873c4;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3);
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 0rem;
+                padding: 0.5rem;
             }
-            
+
+            .post-item {
+                padding: 1rem;
+            }
+
             .blog-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .post-title {
+                font-size: 1.1rem;
             }
         }
         
@@ -204,8 +225,7 @@
     }
     </style>
 </head>
-<body>
-    <body class="custom-body">
+<body class="custom-body">
 		
 	<header class="custom-header">
     <!-- বাম পাশের মেনু -->
@@ -230,12 +250,30 @@
     
     <div class="container">
         <ul class="post-list" id="posts-container"></ul>
-        <button class="load-more-btn" onclick="loadMorePosts()" id="loadMore">আরো পোস্ট দেখুন</button>
+        <button class="load-more-btn" onclick="loadMorePosts()" id="loadMore">আরো পোস্ট দেখুন →</button>
     </div>
 
     <script>
         let visiblePosts = 0;
         let allPosts = [];
+
+        async function fetchPostDate(filename) {
+            try {
+                const response = await fetch(`https://api.github.com/repos/kamilhussen24/kamilhussen24.github.io/commits?path=blog/post/${filename}`);
+                const commits = await response.json();
+                if(commits.length > 0) {
+                    const date = new Date(commits[0].commit.committer.date);
+                    return date.toLocaleDateString('bn-BD', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+                return 'তারিখ পাওয়া যায়নি';
+            } catch (error) {
+                return 'তারিখ পাওয়া যায়নি';
+            }
+        }
 
         async function loadPosts() {
             try {
@@ -265,14 +303,18 @@
                 
                 const title = doc.querySelector('title')?.innerText || 'নামবিহীন পোস্ট';
                 const excerpt = doc.querySelector('p')?.innerText.slice(0, 100) + '...' || 'কোনো বর্ণনা নেই';
+                const postDate = await fetchPostDate(file.name);
                 
                 const postItem = document.createElement('li');
                 postItem.className = 'post-item';
                 postItem.innerHTML = `
-                    <h2 class="post-title">
-                        <a href="post/${file.name}">${title}</a>
-                    </h2>
-                    <p class="post-excerpt">${excerpt}</p>
+                    <a href="post/${file.name}" style="text-decoration:none;color:inherit;">
+                        <div class="post-meta">
+                            <span>📅 ${postDate}</span>
+                        </div>
+                        <h2 class="post-title">${title}</h2>
+                        <p class="post-excerpt">${excerpt}</p>
+                    </a>
                 `;
                 
                 postsContainer.appendChild(postItem);
