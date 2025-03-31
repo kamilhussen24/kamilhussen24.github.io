@@ -10,7 +10,8 @@
   
   <!-- AMP Core Script -->
   <script async src="https://cdn.ampproject.org/v0.js"></script>
-
+ <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+ 
   <!-- Schema Markup -->
   <script type="application/ld+json">
   {
@@ -58,119 +59,360 @@
   <noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
 
   <!-- Custom Styling -->
+  
   <style amp-custom>
+  	
+  	.custom-body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 8px;
+      background-color: #f4f4f4;
+    }
+
+    .custom-header {
+      background-color: #008BCB;
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .custom-logo {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      flex: 1;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .custom-logo a {
+      text-decoration: none;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .custom-logo a:hover {
+      color: #f1f1f1;
+    }
+
+    .custom-menu-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .custom-menu-btn {
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+      background-color: transparent;
+    }
+
+    .custom-menu-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .custom-menu-link {
+      text-decoration: none;
+      color: white;
+    }
+
+    .custom-notification-badge {
+      position: relative;
+    }
+
+    .custom-notification-badge::after {
+      content: "3";
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: red;
+      color: white;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  	
+  	/* main css */
     body {
       font-family: 'Kalpurush', 'SolaimanLipi', Arial, sans-serif;
       line-height: 1.8;
-      max-width: 800px;
+      max-width: 100%;
       margin: 0 auto;
       padding: 20px;
       background: #f8f9fa;
       color: #2d3436;
+      -webkit-tap-highlight-color: transparent;
     }
+    
     header {
       text-align: center;
       padding: 20px 0;
+      position: relative;
     }
+
     h1 {
       color: #2c3e50;
       font-size: 1.8em;
       margin: 25px 0;
       line-height: 1.3;
       text-align: center;
+      position: relative;
+      padding-bottom: 15px;
     }
+
+    h1::after {
+      content: '';
+      width: 60px;
+      height: 3px;
+      background: #3498db;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
     .featured-image {
       width: 100%;
       height: auto;
       margin: 15px 0;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
     }
+
     .content-intro {
       background: #e3f2fd;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+      font-size: 1.05em;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
     }
+
     ol {
       counter-reset: section;
       padding-left: 0;
       margin: 0;
     }
+
     li {
       background: #ffffff;
       margin-bottom: 15px;
-      padding: 20px 20px 20px 70px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 25px 25px 25px 80px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       font-size: 1.05em;
       position: relative;
-      min-height: 60px;
+      min-height: 70px;
       display: flex;
       align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
+    li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
     li:before {
       counter-increment: section;
       content: counter(section);
-      background: #3498db;
+      background: linear-gradient(135deg, #3498db, #2980b9);
       color: white;
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 1.3em;
       position: absolute;
-      left: 15px;
+      left: 20px;
       top: 50%;
       transform: translateY(-50%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     .warning-box {
       background: #fff3cd;
       border-left: 5px solid #ffc107;
-      padding: 20px;
-      margin: 25px 0;
-      border-radius: 5px;
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .warning-box::before {
+      content: '⚠️';
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      opacity: 0.2;
+      font-size: 2.5em;
+    }
+
     .expert-tips {
       background: #e8f5e9;
-      padding: 20px;
+      padding: 25px;
       border-left: 5px solid #4caf50;
-      margin: 25px 0;
-      border-radius: 5px;
+      margin: 30px 0;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .expert-tips::before {
+      content: '💡';
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      opacity: 0.2;
+      font-size: 2.5em;
+    }
+
     .seo-keywords {
       background: #f3e5f5;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 5px;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 8px;
+      font-size: 0.95em;
     }
-    @media (max-width: 600px) {
+
+    @media (max-width: 768px) {
       body {
         padding: 15px;
       }
+
       h1 {
-        font-size: 1.5em;
+        font-size: 1.6em;
+        margin: 20px 0;
       }
+
       li {
-        padding: 15px 15px 15px 60px;
+        padding: 20px 20px 20px 70px;
         font-size: 1em;
       }
+
+      li:before {
+        width: 40px;
+        height: 40px;
+        left: 15px;
+      }
+
+      .content-intro,
+      .warning-box,
+      .expert-tips {
+        padding: 20px;
+        margin: 20px 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.4em;
+      }
+
+      li {
+        padding: 18px 15px 18px 60px;
+      }
+
       li:before {
         width: 35px;
         height: 35px;
-        font-size: 1em;
-        left: 10px;
+        font-size: 1.1em;
+        left: 12px;
       }
     }
+    
+    
+    .rounded {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* আইকন আকার কমানো */
+    height: 40px; /* আইকন আকার কমানো */
+    border-radius: 30%; /* পুরোপুরি গোলাকার */
+    background-color: #008BCB; /* হালকা ব্যাকগ্রাউন্ড */
+    border: 2px solid #008BCB; /* বর্ডার কালার প্রাইমারি */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* হালকা ছায়া */
+    transition: all 0.3s ease; /* ট্রানজিশন */
+    cursor: pointer; /* কাস্টম কার্সর */
+}
+
+.rounded:hover {
+    background-color: #008BCB; /* হোভার করার পর প্রাইমারি কালার */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* হোভার ইফেক্টে ছায়া বাড়ানো */
+    transform: scale(1.1); /* আইকন কিছুটা বড় হবে */
+}
+
+.rounded img {
+    width: 24px; /* আইকন আকার ছোট করা */
+    height: 24px; /* আইকন আকার ছোট করা */
+    transition: all 0.3s ease; /* ট্রানজিশন */
+}
+
+.rounded:hover img {
+    filter: invert(1); /* আইকন রঙ সাদা হবে হোভার করলে */
+}
+
+.rounded:focus {
+    outline: none; /* ফোকাসে আউটলাইন মুছে ফেলা */
+    border: 2px solid #fff3cd; /* ফোকাসে প্রাইমারি কালার আরও গা dark ় */
+}
+.footer {
+    text-align: center;
+     }
   </style>
+<body class="custom-body">
+		
+	<header class="custom-header">
+    <!-- বাম পাশের মেনু -->
+    <a href="https://kamilhussen24.github.io/" class="custom-menu-link">
+      <div class="custom-menu-btn">☰</div>
+    </a><!-- মাঝের লোগো -->
+<div class="custom-logo">
+  <a href="https://kamilhussen24.github.io/">Blog</a>
+</div>
+
+<!-- ডান পাশের গ্রুপ -->
+<div class="custom-menu-group">
+  <!-- শুধুমাত্র নোটিফিকেশন বাটন রাখা হয়েছে -->
+  <a href="https://kamilhussen24.github.io/" class="custom-menu-link custom-notification-badge">
+    <div class="custom-menu-btn">🔔</div>
+  </a>
+</div>
+
+  </header>
+  	
+  </body>
 </head>
+
 <body>
   <header>
     <amp-img src="Image/online-scammer-identify.jpg"
-             alt="২০২৩ সালের অনলাইন নিরাপত্তা টিপস"
+             alt="২০২৫ সালের অনলাইন নিরাপত্তা টিপস"
              width="1200"
              height="675"
              layout="responsive"
@@ -207,6 +449,15 @@
     <li>অস্বচ্ছ লেনদেন প্রক্রিয়া (ক্যাশ অন ডেলিভারি না দেওয়া)</li>
   </ol>
 
+  
+<amp-social-share class="rounded" aria-label="Share on Facebook" type="facebook" data-param-app_id="254325784911610" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share on WhatsApp" type="whatsapp" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share on LinkedIn" type="linkedin" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share on Pinterest" type="pinterest" data-param-media="https://amp.dev/static/samples/img/amp.jpg" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share on Twitter" type="twitter" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share by email " type="email" width="40" height="40"></amp-social-share>
+<amp-social-share class="rounded" aria-label="Share on system" type="system" width="40" height="40"></amp-social-share>
+
   <div class="warning-box">
     <h3>⛔ জরুরি সতর্কতা:</h3>
     <p>• কখনোই অপরিচিত নম্বরে পিন কোড শেয়ার করবেন না<br>
@@ -225,4 +476,8 @@
     <p>🔍 জনপ্রিয় সার্চ কীওয়ার্ড: <em>অনলাইন প্রতারণা থেকে বাঁচার উপায় ২০২৫, ফেসবুক স্ক্যামার চেক করার নিয়ম, ই-কমার্স সাইট চেনার উপায়, মোবাইল ব্যাংকিং নিরাপত্তা টিপস</em></p>
   </div>
 </body>
+<footer class="footer">
+  <p>Article Write by <a href="https://kamilhussen24.github.io/" target="_blank">Kamil Hussen</a></p>
+</footer>
+
 </html>
