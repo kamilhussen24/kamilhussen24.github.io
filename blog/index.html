@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ব্লগ পোস্ট</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
+        h1 { color: #333; }
+        .post-list { display: flex; flex-wrap: wrap; justify-content: center; }
+        .post-item { width: 300px; margin: 15px; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .post-item img { width: 100%; border-radius: 5px; }
+        .post-item a { text-decoration: none; color: #000; font-weight: bold; display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>আমার ব্লগ পোস্ট</h1>
+    <div class="post-list" id="postList"></div><script>
+    async function loadPosts() {
+        let response = await fetch('post/');
+        let text = await response.text();
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(text, 'text/html');
+        let links = Array.from(doc.querySelectorAll('a'));
+        let postList = document.getElementById('postList');
+
+        let posts = links.map(link => link.getAttribute('href'))
+                        .filter(fileName => fileName.endsWith('.html'))
+                        .map(fileName => ({
+                            title: fileName.replace(/[-_]/g, ' ').replace('.html', ''),
+                            url: 'post/' + fileName,
+                            img: 'post/' + fileName.replace('.html', '.jpg')
+                        }));
+        
+        postList.innerHTML = posts.map(post => `
+            <div class='post-item'>
+                <img src='${post.img}' alt='${post.title}'>
+                <a href='${post.url}'>${post.title}</a>
+            </div>
+        `).join('');
+    }
+    loadPosts();
+</script>
+
+</body>
+</html>
