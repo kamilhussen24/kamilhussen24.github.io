@@ -156,7 +156,7 @@
                 const doc = parser.parseFromString(postHtml, 'text/html');
                 
                 const title = doc.querySelector('title')?.innerText || 'নামবিহীন পোস্ট';
-                const excerpt = doc.querySelector('p')?.innerText.slice(0, 150) + '...' || 'কোনো বর্ণনা নেই';
+                const excerpt = doc.querySelector('p')?.innerText.slice(0, 100) + '...' || 'কোনো বর্ণনা নেই';
                 
                 const postItem = document.createElement('li');
                 postItem.className = 'post-item';
