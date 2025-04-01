@@ -394,9 +394,10 @@ body {
                 loadMorePosts();
                 
             } catch (error) {
-                console.error('Error loading posts:', error);
-            }
+            console.error('Error loading posts:', error);
+            alert('লিমিট শেষ ভাই 🙂! একটু পরে আবার চেষ্টা করুন।');
         }
+    }
 
         async function loadMorePosts() {
             const postsContainer = document.getElementById('posts-container');
