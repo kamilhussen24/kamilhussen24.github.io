@@ -410,7 +410,7 @@ body {
                 const doc = parser.parseFromString(postHtml, 'text/html');
                 
                 const title = doc.querySelector('title')?.innerText || 'নামবিহীন পোস্ট';
-                const excerpt = doc.querySelector('p')?.innerText.slice(0, 100) + '...' || 'কোনো বর্ণনা নেই';
+                const excerpt = doc.querySelector('p')?.innerText.slice(0, 130) + '...' || 'কোনো বর্ণনা নেই';
                 const postDate = await fetchPostDate(file.name);
                 
                 const postItem = document.createElement('li');
@@ -418,7 +418,7 @@ body {
                 postItem.innerHTML = `
                     <a href="post/${file.name}" style="text-decoration:none;color:inherit;">
                         <div class="post-meta">
-                            <span>📅 ${postDate}</span>
+                            <span>সবশেষ আপডেট : ${postDate}</span>
                         </div>
                         <h2 class="post-title">${title}</h2>
                         <p class="post-excerpt">${excerpt}</p>
