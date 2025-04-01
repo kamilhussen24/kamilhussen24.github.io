@@ -87,9 +87,19 @@
         .post-meta {
             color: var(--muted-color);
             font-size: 0.85rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #f0f2f5;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
         }
 
         .post-excerpt {
@@ -320,8 +330,9 @@
                 postItem.innerHTML = `
                     <a href="post/${file.name}" style="text-decoration:none;color:inherit;">
                         <div class="post-meta">
-                            <span>📅 ${postDate}</span>
-                        </div>
+                                <span>📅 ${postDate}</span>
+                                <span>👁️ ${views} বার দেখা</span>
+                            </div>
                         <h2 class="post-title">${title}</h2>
                         <p class="post-excerpt">${excerpt}</p>
                     </a>
