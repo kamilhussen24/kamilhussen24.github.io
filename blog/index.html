@@ -362,92 +362,63 @@ body {
     </div>
 
     <script>
-    const GITHUB_TOKEN = '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';
-    const REPO_PATH = 'blog/post/';
+        let visiblePosts = 0;
+        let allPosts = [];
 
-    let visiblePosts = 0;
-    let allPosts = [];
-
-    async function fetchPostDate(filename) {
-        try {
-            const response = await fetch(
-                `https://api.github.com/repos/kamilhussen24/kamilhussen24.github.io/commits?path=${REPO_PATH}${filename}`,
-                {
-                    headers: {
-                        Authorization: `token ${GITHUB_TOKEN}`,
-                    },
+        async function fetchPostDate(filename) {
+            try {
+                const response = await fetch(`https://api.github.com/repos/kamilhussen24/kamilhussen24.github.io/commits?path=blog/post/${filename}`);
+                const commits = await response.json();
+                if(commits.length > 0) {
+                    const date = new Date(commits[0].commit.committer.date);
+                    return date.toLocaleDateString('bn-BD', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
                 }
-            );
-            
-            const commits = await response.json();
-            if (commits.length > 0) {
-                const date = new Date(commits[0].commit.committer.date);
-                return date.toLocaleDateString('bn-BD', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                });
+                return 'তারিখ পাওয়া যায়নি';
+            } catch (error) {
+                return 'তারিখ পাওয়া যায়নি';
             }
-            return 'তারিখ পাওয়া যায়নি';
-        } catch (error) {
-            console.error('Error fetching date:', error);
-            return 'তারিখ পাওয়া যায়নি';
         }
-    }
 
-    async function loadPosts() {
-        try {
-            const response = await fetch(
-                `https://api.github.com/repos/kamilhussen24/kamilhussen24.github.io/contents/${REPO_PATH}`,
-                {
-                    headers: {
-                        Authorization: `token ${GITHUB_TOKEN}`,
-                    },
-                }
-            );
-            
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            const data = await response.json();
-            allPosts = data.filter(file => 
-                file.type === 'file' && 
-                file.name.endsWith('.html') &&
-                file.name !== 'index.html'
-            );
-            
-            visiblePosts = 0;
-            document.getElementById('posts-container').innerHTML = '';
-            loadMorePosts();
-            
-        } catch (error) {
-            console.error('Error loading posts:', error);
-            alert('পোস্ট লোড করতে সমস্যা হচ্ছে! পরে আবার চেষ্টা করুন।');
+        async function loadPosts() {
+            try {
+                const response = await fetch('https://api.github.com/repos/kamilhussen24/kamilhussen24.github.io/contents/blog/post');
+                const files = await response.json();
+                
+                allPosts = files.filter(file => file.name.endsWith('.html'));
+                visiblePosts = 0;
+                document.getElementById('posts-container').innerHTML = '';
+                loadMorePosts();
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
         }
-    }
 
-    async function loadMorePosts() {
-        try {
+        async function loadMorePosts() {
             const postsContainer = document.getElementById('posts-container');
             const nextPosts = allPosts.slice(visiblePosts, visiblePosts + 5);
             
-            for (const file of nextPosts) {
+            for(const file of nextPosts) {
                 const postResponse = await fetch(file.download_url);
-                if (!postResponse.ok) continue;
-                
                 const postHtml = await postResponse.text();
+                
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(postHtml, 'text/html');
                 
                 const title = doc.querySelector('title')?.innerText || 'নামবিহীন পোস্ট';
-                const excerpt = doc.querySelector('p')?.innerText?.slice(0, 130) + '...' || 'কোনো বর্ণনা নেই';
+                const excerpt = doc.querySelector('p')?.innerText.slice(0, 100) + '...' || 'কোনো বর্ণনা নেই';
                 const postDate = await fetchPostDate(file.name);
                 
                 const postItem = document.createElement('li');
                 postItem.className = 'post-item';
                 postItem.innerHTML = `
-                    <a href="post/${file.name}" class="post-link">
+                    <a href="post/${file.name}" style="text-decoration:none;color:inherit;">
                         <div class="post-meta">
-                            <span class="post-date">সবশেষ আপডেট : ${postDate}</span>
+                            <span>📅 ${postDate}</span>
                         </div>
                         <h2 class="post-title">${title}</h2>
                         <p class="post-excerpt">${excerpt}</p>
@@ -459,23 +430,15 @@ body {
 
             visiblePosts += 5;
             updateLoadMoreButton();
-            
-        } catch (error) {
-            console.error('Error loading more posts:', error);
         }
-    }
 
-    function updateLoadMoreButton() {
-        const loadMoreButton = document.getElementById('loadMore');
-        if (!loadMoreButton) return;
-        
-        loadMoreButton.style.display = visiblePosts >= allPosts.length ? 'none' : 'block';
-        loadMoreButton.disabled = visiblePosts >= allPosts.length;
-    }
+        function updateLoadMoreButton() {
+            const loadMoreButton = document.getElementById('loadMore');
+            loadMoreButton.style.display = visiblePosts >= allPosts.length ? 'none' : 'block';
+        }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', loadPosts);
-</script>
+        window.onload = loadPosts;
+    </script>
 </body>
 	<footer class="footer">
   <p>Design by <a href="https://kamilhussen24.github.io/" target="_blank">Kamil Hussen</a></p>
