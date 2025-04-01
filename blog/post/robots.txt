@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://kamilhussen24.github.io/sitemap.xml
+Sitemap: https://kamilhussen24.github.io/blog/post/sitemap.xml
