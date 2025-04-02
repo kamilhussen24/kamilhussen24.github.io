@@ -1,0 +1,32 @@
+name: Update Sitemap
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # প্রতিদিন ২৪ ঘণ্টা পর রান করবে
+  workflow_dispatch:  # ম্যানুয়ালি রান করতে চাইলে
+
+jobs:
+  update_sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: রিপোজিটরি ক্লোন করুন
+        uses: actions/checkout@v3
+
+      - name: Python সেটআপ করুন
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: প্রয়োজনীয় লাইব্রেরি ইন্সটল করুন
+        run: pip install requests
+
+      - name: `sitemap.xml` আপডেট করুন
+        run: python update_sitemap.py  # আমরা পরবর্তী স্টেপে এটি তৈরি করব
+
+      - name: পরিবর্তনগুলো GitHub-এ কমিট করুন
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Auto-update sitemap"
+          git push
