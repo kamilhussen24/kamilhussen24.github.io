@@ -1,35 +1,44 @@
 import os
-import time
+import requests
+from datetime import datetime
 
-BASE_URL = "https://kamilhussen24.github.io"
+# আপনার ওয়েবসাইটের মূল লিংক
+SITE_URL = "https://kamilhussen24.github.io"
 
-# সাইটের লিংক এবং পাথ সেটআপ
-pages = [
-    "/",
+# সাইটম্যাপ ফাইলের নাম
+SITEMAP_FILE = "sitemap.xml"
+
+# নতুন পোস্ট লিস্ট
+NEW_POSTS = [
+    "/blog/post/online-scammer-identify-bangla",
     "/about-me",
     "/privacy-policy",
-    "/terms-of-service",
     "/blog",
+    "/terms-of-service"
 ]
 
-# অটোমেটিক পোস্ট লিস্ট বের করা (blog/post ফোল্ডারের সব HTML ফাইল)
-blog_dir = "blog/post"
-if os.path.exists(blog_dir):
-    for file in os.listdir(blog_dir):
-        if file.endswith(".html"):
-            pages.append(f"/blog/post/{file}")
+# বর্তমান তারিখ ISO 8601 ফরম্যাটে
+current_date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
-# সময় সেটআপ (Google-এর জন্য সঠিক ফরম্যাট)
-timestamp = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+# নতুন সাইটম্যাপ XML তৈরি করা
+sitemap_content = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+'''
 
-# Sitemap.xml তৈরি করা
-sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-for page in pages:
-    sitemap_content += f'    <url>\n        <loc>{BASE_URL}{page}</loc>\n        <lastmod>{timestamp}</lastmod>\n        <changefreq>weekly</changefreq>\n        <priority>0.80</priority>\n    </url>\n'
+# প্রতিটি লিংক অ্যাড করা
+for post in NEW_POSTS:
+    sitemap_content += f'''    <url>
+        <loc>{SITE_URL}{post}</loc>
+        <lastmod>{current_date}</lastmod>
+        <priority>0.80</priority>
+        <changefreq>weekly</changefreq>
+    </url>\n'''
+
+# সাইটম্যাপ শেষ করা
 sitemap_content += "</urlset>"
 
-# ফাইল সংরক্ষণ
-with open("sitemap.xml", "w") as f:
-    f.write(sitemap_content)
+# ফাইল সেভ করা
+with open(SITEMAP_FILE, "w", encoding="utf-8") as file:
+    file.write(sitemap_content)
 
-print("✅ Sitemap.xml আপডেট সম্পন্ন!")
+print(f"✅ {SITEMAP_FILE} সফলভাবে আপডেট হয়েছে!")
