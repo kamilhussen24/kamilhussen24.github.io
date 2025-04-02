@@ -5,7 +5,10 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 0 * * *"  # Every day at midnight UTC
+    - cron: "0 0 * * *"  # প্রতি দিন রাত ১২টায় রান হবে
+
+permissions:
+  contents: write  # Write permission দিন
 
 jobs:
   update-sitemap:
