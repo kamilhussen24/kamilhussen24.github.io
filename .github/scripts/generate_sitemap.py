@@ -1,54 +1,78 @@
 import os
 import time
+import subprocess
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
-# 📁 HTML ফাইলগুলোর মূল ফোল্ডার (আপনার প্রকৃত path দিন)
-ROOT_DIR = "./public_html"  # ⚠️ আপনার HTML ফাইলের মূল ফোল্ডার দিন
-
-# 🌍 ওয়েবসাইটের মূল URL (নিজের সাইটের URL দিন)
-BASE_URL = "https://kamilhussen24.github.io/"
-
-# 📄 সাইটম্যাপ ফাইলের নাম
+# 🔹 কনফিগারেশন
 SITEMAP_FILE = "sitemap.xml"
+BASE_URL = "https://kamilhussen24.github.io"
+HTML_DIR = "./"
 
-def get_last_modified(file_path):
-    """ 🔄 নির্দিষ্ট ফাইলের সর্বশেষ পরিবর্তনের সময় সংগ্রহ করা """
-    timestamp = os.path.getmtime(file_path)
-    return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(timestamp))  # UTC টাইম ফরম্যাট
+def get_git_root():
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return None
 
-def generate_sitemap():
-    urls = []
+def get_git_last_modified_time(file_path):
+    git_root = get_git_root()
+    if not git_root:
+        return None
+    
+    try:
+        file_abs = os.path.abspath(file_path)
+        relative_path = os.path.relpath(file_abs, git_root)
+        
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", "--", relative_path],
+            capture_output=True, text=True, check=True
+        )
+        return result.stdout.strip() or None
+    except Exception:
+        return None
 
-    # 📂 সকল HTML ফাইল স্ক্যান করা
-    for root, _, files in os.walk(ROOT_DIR):
-        for file in files:
-            if file.endswith(".html"):
-                full_path = os.path.join(root, file)  # ফাইলের সম্পূর্ণ পাথ
-                last_modified = get_last_modified(full_path)  # লাস্ট মডিফাই সময় সংগ্রহ
-                
-                # 🌍 রিলেটিভ পাথ বের করে ".html" বাদ দেওয়া
-                relative_path = os.path.relpath(full_path, ROOT_DIR).replace("\\", "/")
-                url = BASE_URL + relative_path.replace(".html", "")  # .html বাদ দেওয়া
+def generate_clean_url(relative_path):
+    # 🔹 .html এক্সটেনশন রিমুভ করা
+    path_without_ext = os.path.splitext(relative_path)[0]
+    # 🔹 স্ল্যাশ নরমালাইজেশন
+    return f"{BASE_URL}/{path_without_ext}".replace("\\", "/")
 
-                # 📝 URL এবং লাস্টমডিফাইড ডেট যোগ করা
-                urls.append((url, last_modified))
+# 🔹 সাইটম্যাপ জেনারেশন শুরু
+sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-    # 🔄 Google Sitemap XML তৈরি করা
-    root = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+# 🔹 সকল HTML ফাইল প্রসেসিং
+for root, _, files in os.walk(HTML_DIR):
+    for file in files:
+        if file.endswith(".html"):
+            file_path = os.path.join(root, file)
+            
+            # 🔹 লাস্ট মডিফাই ডেট সংগ্রহ
+            last_mod = get_git_last_modified_time(file_path)
+            if not last_mod:
+                mtime = os.path.getmtime(file_path)
+                last_mod = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(mtime))
+            
+            # 🔹 ক্লিন URL জেনারেট
+            relative_path = os.path.relpath(file_path, HTML_DIR)
+            clean_url = generate_clean_url(relative_path)
+            
+            # 🔹 XML নোড তৈরি
+            url_node = ET.SubElement(sitemap, "url")
+            ET.SubElement(url_node, "loc").text = clean_url
+            ET.SubElement(url_node, "lastmod").text = last_mod
+            ET.SubElement(url_node, "priority").text = "0.8" if "index.html" not in file else "1.0"
+            ET.SubElement(url_node, "changefreq").text = "weekly"
 
-    for url, lastmod in sorted(urls, key=lambda x: x[1], reverse=True):  # লাস্ট মডিফাই তারিখ অনুযায়ী সাজানো
-        url_element = ET.SubElement(root, "url")
-        ET.SubElement(url_element, "loc").text = url
-        ET.SubElement(url_element, "lastmod").text = lastmod
-        ET.SubElement(url_element, "priority").text = "0.8"
-        ET.SubElement(url_element, "changefreq").text = "weekly"
+# 🔹 XML ফরম্যাটিং এবং সেভ
+xml_str = ET.tostring(sitemap, encoding='utf-8')
+pretty_xml = minidom.parseString(xml_str).toprettyxml(indent='  ')
 
-    # 🏁 XML ফাইল তৈরি
-    tree = ET.ElementTree(root)
-    tree.write(SITEMAP_FILE, encoding="utf-8", xml_declaration=True)
+with open(SITEMAP_FILE, 'w', encoding='utf-8') as f:
+    f.write(pretty_xml)
 
-    print(f"✅ সাইটম্যাপ সফলভাবে তৈরি হয়েছে: {SITEMAP_FILE}")
-
-# 🔥 রান করুন
-if __name__ == "__main__":
-    generate_sitemap()
+print("✅ সাইটম্যাপ সফলভাবে জেনারেট হয়েছে! প্রতিটি URL ইউনিক লাস্টমড সহ!")
