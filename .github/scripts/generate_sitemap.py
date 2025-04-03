@@ -37,7 +37,7 @@ def generate_url(file_path):
         # ডাবল স্ল্যাশ সমস্যা সমাধান
         if dir_path in (".", ""):
             return f"{BASE_URL}/"
-        return f"{BASE_URL}/{dir_path}/"
+        return f"{BASE_URL}/{dir_path}"
     
     # সাধারণ পেজ
     url = os.path.splitext(relative_path)[0].replace("\\", "/")
