@@ -1,21 +1,20 @@
 import os
-import time
 import subprocess
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from datetime import datetime
 
-# 🔹 কনফিগারেশন
+# 🔹 কনফিগারেশন সেটিংস
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
-HTML_DIR = "./"  # HTML ফাইল যেখানে আছে
+HTML_DIR = "./"  # আপনার HTML ফাইল যেখানে আছে
 TIMEZONE_OFFSET = "+06:00"  # বাংলাদেশ টাইমজোন
 
-# 🔹 নির্দিষ্ট ফাইলের লাস্ট মডিফাই টাইম বের করা (Git থেকে)
+# 🔹 নির্দিষ্ট ফাইলের লাস্ট মডিফাই টাইম বের করার ফাংশন (Git থেকে)
 def get_git_last_modified_time(file_path):
     try:
         result = subprocess.run(
-            ["git", "log", "-1", "--format=%cd", "--date=iso", file_path],
+            ["git", "log", "-1", "--format=%cd", "--date=iso-strict", file_path],
             capture_output=True, text=True, check=True
         )
         git_time = result.stdout.strip()
@@ -23,15 +22,15 @@ def get_git_last_modified_time(file_path):
     except subprocess.CalledProcessError:
         return None
 
-# 🔹 ফাইল সিস্টেম থেকে লাস্ট মডিফাই টাইম নেওয়া
+# 🔹 ফাইল সিস্টেম থেকে লাস্ট মডিফাই টাইম নেওয়ার ফাংশন
 def get_file_system_last_modified_time(file_path):
     mod_time = os.path.getmtime(file_path)
     return datetime.utcfromtimestamp(mod_time).strftime('%Y-%m-%dT%H:%M:%S') + TIMEZONE_OFFSET
 
-# 🔹 নতুন সাইটম্যাপ তৈরি
+# 🔹 সাইটম্যাপ তৈরি
 sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-# 🔹 সমস্ত HTML ফাইল স্ক্যান করা
+# 🔹 HTML ফাইল স্ক্যান করে প্রতিটির জন্য আলাদা lastmod নির্ধারণ করা
 for root, _, files in os.walk(HTML_DIR):
     for file in files:
         if file.endswith(".html"):  
@@ -44,7 +43,7 @@ for root, _, files in os.walk(HTML_DIR):
             if not last_mod_time:
                 last_mod_time = get_file_system_last_modified_time(file_path)
 
-            # 🔹 রিলেটিভ পাথ থেকে ক্লিন URL তৈরি
+            # 🔹 রিলেটিভ পাথ থেকে URL তৈরি
             relative_path = os.path.relpath(file_path, HTML_DIR).replace("\\", "/")
             url = f"{BASE_URL}/{relative_path}"
 
