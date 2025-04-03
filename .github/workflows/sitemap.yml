@@ -35,7 +35,7 @@ jobs:
           
           # স্টেজিং এবং কমিট
           git add sitemap.xml
-          git commit -m "🔄 Auto-updated sitemap [skip ci]" || echo "No changes"
+          git commit -m "🔄 Auto-updated sitemap [skip it]" || echo "No changes"
           
           # রিমোটের সাথে সিঙ্ক্রোনাইজ
           git fetch origin main
