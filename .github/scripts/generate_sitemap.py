@@ -70,7 +70,7 @@ def generate_sitemap(force_update=False):
     
     with open(SITEMAP_FILE, 'w', encoding='utf-8') as f:
         f.write(pretty_xml)
-    print(f"✅ সাইটম্যাপ সফলভাবে জেনারেট হয়েছে: {SITEMAP_FILE}")
+    print(f"🙂সাইটম্যাপ সফলভাবে জেনারেট হয়েছে: {SITEMAP_FILE}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
