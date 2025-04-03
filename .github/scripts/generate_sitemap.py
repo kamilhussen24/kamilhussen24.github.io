@@ -2,6 +2,7 @@ import os
 import time
 import subprocess
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 # 🔹 কনফিগারেশন
 SITEMAP_FILE = "sitemap.xml"
@@ -23,15 +24,16 @@ def get_git_last_modified_time(file_path):
 # 🔹 নতুন সাইটম্যাপ XML তৈরি
 sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-# 🔹 মূল ওয়েবসাইটের URL
+# 🔹 মূল ওয়েবসাইটের URL (priority 1.0)
 index_path = os.path.join(HTML_DIR, "index.html")
-index_lastmod = get_git_last_modified_time(index_path) or time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(os.path.getmtime(index_path)))
+if os.path.exists(index_path):
+    index_lastmod = get_git_last_modified_time(index_path) or time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(os.path.getmtime(index_path)))
 
-index_url = ET.SubElement(sitemap, "url")
-ET.SubElement(index_url, "loc").text = BASE_URL
-ET.SubElement(index_url, "lastmod").text = index_lastmod
-ET.SubElement(index_url, "priority").text = "1.0"
-ET.SubElement(index_url, "changefreq").text = "daily"
+    index_url = ET.SubElement(sitemap, "url")
+    ET.SubElement(index_url, "loc").text = BASE_URL
+    ET.SubElement(index_url, "lastmod").text = index_lastmod
+    ET.SubElement(index_url, "priority").text = "1.0"
+    ET.SubElement(index_url, "changefreq").text = "daily"
 
 # 🔹 HTML ফাইল স্ক্যান করা এবং লাস্ট মডিফাইড ডেট যুক্ত করা
 for root, _, files in os.walk(HTML_DIR):
@@ -39,7 +41,7 @@ for root, _, files in os.walk(HTML_DIR):
         if file.endswith(".html") and file != "index.html":  # index.html আলাদা করা হলো
             file_path = os.path.join(root, file)
 
-            # 🔹 প্রথমে Git থেকে লাস্ট মডিফাইড টাইম নেওয়ার চেষ্টা করবো
+            # 🔹 Git থেকে লাস্ট মডিফাইড টাইম নেওয়ার চেষ্টা করবো
             last_mod_time = get_git_last_modified_time(file_path)
 
             # 🔹 যদি Git থেকে না পাওয়া যায়, তবে ফাইলের মডিফিকেশন টাইম নেবো
@@ -48,7 +50,7 @@ for root, _, files in os.walk(HTML_DIR):
 
             # 🔹 রিলেটিভ পাথ থেকে ক্লিন URL তৈরি
             relative_path = os.path.relpath(file_path, HTML_DIR).replace("\\", "/")
-            url = f"{BASE_URL}/{relative_path}".replace(".html", "")
+            url = f"{BASE_URL}/{relative_path}"
 
             # 🔹 XML এ লাস্ট মডিফাই তথ্য সহ URL যোগ করা
             url_entry = ET.SubElement(sitemap, "url")
@@ -58,11 +60,11 @@ for root, _, files in os.walk(HTML_DIR):
             ET.SubElement(url_entry, "changefreq").text = "weekly"
 
 # 🔹 XML সুন্দরভাবে ফরম্যাট করা
-sitemap_data = ET.tostring(sitemap, encoding="utf-8", method="xml").decode()
+xml_string = ET.tostring(sitemap, encoding="utf-8")
+xml_pretty = minidom.parseString(xml_string).toprettyxml(indent="  ")
 
 # 🔹 সাইটম্যাপ ফাইল সংরক্ষণ করা
 with open(SITEMAP_FILE, "w", encoding="utf-8") as f:
-    f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-    f.write(sitemap_data)
+    f.write(xml_pretty)
 
-print("✅ sitemap.xml সফলভাবে আপডেট হয়েছে!")
+print("✅ sitemap.xml সুন্দরভাবে আপডেট হয়েছে!")
