@@ -3,7 +3,7 @@ import time
 import xml.etree.ElementTree as ET
 
 # 📁 HTML ফাইলগুলোর মূল ফোল্ডার (আপনার প্রকৃত path দিন)
-ROOT_DIR = "./public_html"  # ⚠️ এখানে আপনার HTML ফাইলের মূল ফোল্ডার দিন
+ROOT_DIR = "./public_html"  # ⚠️ আপনার HTML ফাইলের মূল ফোল্ডার দিন
 
 # 🌍 ওয়েবসাইটের মূল URL (নিজের সাইটের URL দিন)
 BASE_URL = "https://kamilhussen24.github.io/"
@@ -14,7 +14,7 @@ SITEMAP_FILE = "sitemap.xml"
 def get_last_modified(file_path):
     """ 🔄 নির্দিষ্ট ফাইলের সর্বশেষ পরিবর্তনের সময় সংগ্রহ করা """
     timestamp = os.path.getmtime(file_path)
-    return time.strftime('%Y-%m-%dT%H:%M:%S+00:00', time.gmtime(timestamp))  # UTC টাইম ফরম্যাট
+    return time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(timestamp))  # UTC টাইম ফরম্যাট
 
 def generate_sitemap():
     urls = []
@@ -28,7 +28,7 @@ def generate_sitemap():
                 
                 # 🌍 রিলেটিভ পাথ বের করে ".html" বাদ দেওয়া
                 relative_path = os.path.relpath(full_path, ROOT_DIR).replace("\\", "/")
-                url = BASE_URL + relative_path.replace(".html", "")
+                url = BASE_URL + relative_path.replace(".html", "")  # .html বাদ দেওয়া
 
                 # 📝 URL এবং লাস্টমডিফাইড ডেট যোগ করা
                 urls.append((url, last_modified))
@@ -36,7 +36,7 @@ def generate_sitemap():
     # 🔄 Google Sitemap XML তৈরি করা
     root = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-    for url, lastmod in urls:
+    for url, lastmod in sorted(urls, key=lambda x: x[1], reverse=True):  # লাস্ট মডিফাই তারিখ অনুযায়ী সাজানো
         url_element = ET.SubElement(root, "url")
         ET.SubElement(url_element, "loc").text = url
         ET.SubElement(url_element, "lastmod").text = lastmod
