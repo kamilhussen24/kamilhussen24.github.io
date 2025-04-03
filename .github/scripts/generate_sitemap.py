@@ -8,7 +8,7 @@ from datetime import datetime
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
 HTML_DIR = "./"
-EXCLUDE_FILES = ['404.html','kamil.html']
+EXCLUDE_FILES = ['404.html']
 
 def get_last_modified(file_path):
     """Git কমিট বা ফাইল সিস্টেম থেকে ডেট সংগ্রহ"""
@@ -41,7 +41,7 @@ def generate_url(file_path):
     
     # সাধারণ পেজ
     url = os.path.splitext(relative_path)[0].replace("\\", "/")
-    return f"{BASE_URL}{url}"
+    return f"{BASE_URL}/{url}"
 
 def generate_sitemap():
     """সাইটম্যাপ জেনারেটর"""
