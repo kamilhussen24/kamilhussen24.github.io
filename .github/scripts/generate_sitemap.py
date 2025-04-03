@@ -1,78 +1,56 @@
 import os
 import time
-import subprocess
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
 
-# 🔹 কনফিগারেশন
+# 📁 যেই ফোল্ডার থেকে HTML ফাইলগুলো সংগ্রহ করা হবে
+ROOT_DIR = "path/to/your/html/files"  # 🔄 এখানে আপনার প্রকৃত path দিন
+
+# 🌍 সাইটের বেস URL (আপনার GitHub Pages লিংক)
+BASE_URL = "https://kamilhussen24.github.io/"
+
+# 📄 সাইটম্যাপ ফাইল
 SITEMAP_FILE = "sitemap.xml"
-BASE_URL = "https://kamilhussen24.github.io"
-HTML_DIR = "./"
 
-def get_git_root():
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"],
-            capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        return None
+# 🌐 সাইটম্যাপের টেমপ্লেট
+SITEMAP_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+"""
 
-def get_git_last_modified_time(file_path):
-    git_root = get_git_root()
-    if not git_root:
-        return None
-    
-    try:
-        file_abs = os.path.abspath(file_path)
-        relative_path = os.path.relpath(file_abs, git_root)
-        
-        result = subprocess.run(
-            ["git", "log", "-1", "--format=%cI", "--", relative_path],
-            capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip() or None
-    except Exception:
-        return None
+SITEMAP_FOOTER = "</urlset>"
 
-def generate_clean_url(relative_path):
-    # 🔹 .html এক্সটেনশন রিমুভ করা
-    path_without_ext = os.path.splitext(relative_path)[0]
-    # 🔹 স্ল্যাশ নরমালাইজেশন
-    return f"{BASE_URL}/{path_without_ext}".replace("\\", "/")
+def get_last_modified(file_path):
+    """ 🔄 ফাইলের লাস্ট মডিফাই তারিখ সংগ্রহ করা """
+    timestamp = os.path.getmtime(file_path)  # ⏳ Unix timestamp
+    return time.strftime('%Y-%m-%dT%H:%M:%S+06:00', time.localtime(timestamp))  # 🕒 BD Timezone
 
-# 🔹 সাইটম্যাপ জেনারেশন শুরু
-sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+def generate_sitemap():
+    urls = []
 
-# 🔹 সকল HTML ফাইল প্রসেসিং
-for root, _, files in os.walk(HTML_DIR):
-    for file in files:
-        if file.endswith(".html"):
-            file_path = os.path.join(root, file)
-            
-            # 🔹 লাস্ট মডিফাই ডেট সংগ্রহ
-            last_mod = get_git_last_modified_time(file_path)
-            if not last_mod:
-                mtime = os.path.getmtime(file_path)
-                last_mod = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(mtime))
-            
-            # 🔹 ক্লিন URL জেনারেট
-            relative_path = os.path.relpath(file_path, HTML_DIR)
-            clean_url = generate_clean_url(relative_path)
-            
-            # 🔹 XML নোড তৈরি
-            url_node = ET.SubElement(sitemap, "url")
-            ET.SubElement(url_node, "loc").text = clean_url
-            ET.SubElement(url_node, "lastmod").text = last_mod
-            ET.SubElement(url_node, "priority").text = "0.8" if "index.html" not in file else "1.0"
-            ET.SubElement(url_node, "changefreq").text = "weekly"
+    # 📂 সব HTML ফাইল সংগ্রহ করা
+    for root, _, files in os.walk(ROOT_DIR):
+        for file in files:
+            if file.endswith(".html"):
+                full_path = os.path.join(root, file)
+                last_modified = get_last_modified(full_path)
 
-# 🔹 XML ফরম্যাটিং এবং সেভ
-xml_str = ET.tostring(sitemap, encoding='utf-8')
-pretty_xml = minidom.parseString(xml_str).toprettyxml(indent='  ')
+                # 🌍 URL তৈরি করা (".html" বাদ দিয়ে)
+                relative_path = os.path.relpath(full_path, ROOT_DIR).replace("\\", "/")
+                url = BASE_URL + relative_path.replace(".html", "")
 
-with open(SITEMAP_FILE, 'w', encoding='utf-8') as f:
-    f.write(pretty_xml)
+                # 📝 সাইটম্যাপে URL যুক্ত করা
+                urls.append(f"""
+    <url>
+        <loc>{url}</loc>
+        <lastmod>{last_modified}</lastmod>
+        <priority>0.8</priority>
+        <changefreq>weekly</changefreq>
+    </url>""")
 
-print("✅ সাইটম্যাপ সফলভাবে জেনারেট হয়েছে! প্রতিটি URL ইউনিক লাস্টমড সহ!")
+    # 🏁 XML ফাইল তৈরি করা
+    with open(SITEMAP_FILE, "w", encoding="utf-8") as f:
+        f.write(SITEMAP_HEADER + "\n".join(urls) + SITEMAP_FOOTER)
+
+    print(f"✅ সাইটম্যাপ তৈরি হয়েছে: {SITEMAP_FILE}")
+
+# 🔥 স্ক্রিপ্ট রান করা
+if __name__ == "__main__":
+    generate_sitemap()
