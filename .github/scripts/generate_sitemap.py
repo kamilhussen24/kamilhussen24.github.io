@@ -56,7 +56,7 @@ def generate_sitemap():
             loc = generate_url(full_path)
             
             # প্রায়োরিটি এবং চেঞ্জফ্রিকোয়েন্সি সেটিং
-            is_main_page = loc.endswith('/')
+            is_main_page = loc.endswith('')
             priority = "1.0" if is_main_page else "0.8"
             changefreq = "weekly"
             
