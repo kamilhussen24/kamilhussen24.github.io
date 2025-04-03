@@ -10,13 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # কমিট করার পারমিশন
+      contents: write
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # সম্পূর্ণ Git হিস্ট্রি পেতে
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,21 +27,16 @@ jobs:
         run: pip install xmltodict
 
       - name: Generate Sitemap
-        working-directory: .github/scripts  # সঠিক ডিরেক্টরিতে যান
-        run: python generate_sitemap.py
+        run: |
+          echo "বর্তমান ডিরেক্টরি: $(pwd)"
+          python .github/scripts/generate_sitemap.py --force
+          ls -la sitemap.xml  # ফাইল এক্সিস্টেন্স চেক করুন
 
       - name: Commit and Push
         run: |
-          git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          
-          # শুধু sitemap.xml চেক করুন
-          if git diff --quiet sitemap.xml; then
-            echo "No changes to commit"
-            exit 0
-          fi
-
+          git config --global user.email "actions@github.com"
           git add sitemap.xml
-          git commit -m "🔄 Auto-updated sitemap [skip ci]"
-          git pull origin main --rebase  # কনফ্লিক্ট এড়াতে
+          git commit -m "🚀 সাইটম্যাপ আপডেট হয়েছে [skip ci]"
+          git pull origin main
           git push origin main
