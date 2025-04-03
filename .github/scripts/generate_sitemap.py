@@ -6,20 +6,20 @@ from datetime import datetime
 import argparse
 
 # কনফিগারেশন
-SITEMAP_FILE = "sitemap.xml"
+SITEMAP_FILE = os.path.abspath("sitemap.xml")  # পরম পাথ ব্যবহার করুন
 BASE_URL = "https://kamilhussen24.github.io"
-HTML_DIR = "./"
-EXCLUDE_FILES = ['404.html']
+HTML_DIR = os.path.abspath(".")  # বর্তমান ডিরেক্টরির পরম পাথ
+EXCLUDE_FILES = {'404.html'}
 
 def delete_old_sitemap():
     """পুরাতন সাইটম্যাপ ডিলিট করুন"""
     try:
-        os.remove(SITEMAP_FILE)
-        print("♻️ পুরাতন সাইটম্যাপ ডিলিট করা হয়েছে")
-    except FileNotFoundError:
-        print("⚠️ কোনো পুরাতন সাইটম্যাপ পাওয়া যায়নি")
+        if os.path.exists(SITEMAP_FILE):
+            os.remove(SITEMAP_FILE)
+            print("✅ পুরাতন সাইটম্যাপ ডিলিট করা হয়েছে")
     except Exception as e:
-        print(f"❌ সাইটম্যাপ ডিলিট করতে সমস্যা: {str(e)}")
+        print(f"❌ সাইটম্যাপ ডিলিটে সমস্যা: {str(e)}")
+        exit(1)
 
 def get_last_modified(file_path, force_update=False):
     """সর্বশেষ মডিফিকেশন ডেট সংগ্রহ"""
@@ -52,7 +52,6 @@ def generate_url(file_path):
 
 def generate_sitemap(force_update=False):
     """সম্পূর্ণ নতুন সাইটম্যাপ তৈরি"""
-    # পুরাতন সাইটম্যাপ ডিলিট করুন
     delete_old_sitemap()
     
     urlset = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
@@ -65,7 +64,7 @@ def generate_sitemap(force_update=False):
                 full_path = os.path.join(root, file)
                 html_files.append(full_path)
     
-    print(f"🔍 মোট {len(html_files)} HTML ফাইল স্ক্যান করা হয়েছে")
+    print(f"🔍 মোট {len(html_files)} টি HTML ফাইল পাওয়া গেছে")
     
     for file_path in html_files:
         loc = generate_url(file_path)
@@ -84,7 +83,7 @@ def generate_sitemap(force_update=False):
     
     with open(SITEMAP_FILE, 'w', encoding='utf-8') as f:
         f.write(pretty_xml)
-    print(f"✅ সফলভাবে নতুন সাইটম্যাপ তৈরি হয়েছে: {SITEMAP_FILE}")
+    print(f"🎉 সাইটম্যাপ তৈরি হয়েছে: {SITEMAP_FILE}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -93,7 +92,6 @@ if __name__ == "__main__":
     
     try:
         generate_sitemap(force_update=args.force)
-        print("✨ স্ক্রিপ্ট সফলভাবে সম্পন্ন হয়েছে")
     except Exception as e:
         print(f"☠️ ক্রিটিক্যাল ত্রুটি: {str(e)}")
         exit(1)
