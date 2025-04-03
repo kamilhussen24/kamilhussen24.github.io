@@ -2,8 +2,8 @@ name: Sitemap Auto Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # দৈনিক স্বয়ংক্রিয় আপডেট
-  workflow_dispatch:     # ম্যানুয়ালি যখন ইচ্ছা তখন রান করার অপশন
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,26 +17,32 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        token: ${{ secrets.GH_PAT }}
+
+    - name: Verify Script Exists
+      run: |
+        echo "Checking for sitemap generator..."
+        ls -la .github/scripts/
+        if [ ! -f .github/scripts/sitemap_generator.py ]; then
+          echo "Error: sitemap_generator.py not found!"
+          exit 1
+        fi
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 
-    - name: Generate Fresh Sitemap
-      run: |
-        # পুরানো সাইটম্যাপ ডিলিট করে সম্পূর্ণ নতুন করে তৈরি
-        rm -f sitemap.xml
-        python .github/scripts/sitemap_generator.py --force
+    - name: Install Dependencies
+      run: pip install xmltodict
 
-    - name: Force Update Sitemap
+    - name: Run Sitemap Generator
+      working-directory: .github/scripts
+      run: python sitemap_generator.py --force
+
+    - name: Commit and Push
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
-        
         git add sitemap.xml
-        git commit -m "COMPLETE sitemap rebuild [skip ci]"
-        
-        # জোর করে পুশ (শুধু sitemap.xml ফাইলটির জন্য)
-        git push origin main --force
+        git commit -m "Updated sitemap [skip ci]" || echo "No changes to commit"
+        git push
