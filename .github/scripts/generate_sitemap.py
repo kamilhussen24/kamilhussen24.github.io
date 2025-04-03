@@ -9,7 +9,7 @@ SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
 HTML_DIR = "./"
 EXCLUDE_FILES = ['404.html','kamil.html']
-EXCLUDE_DIRS = ['private', 'experimental']
+EXCLUDE_DIRS = ['blog', 'experimental']
 
 def get_last_modified(file_path):
     """Git কমিট বা ফাইল সিস্টেম থেকে ডেট সংগ্রহ"""
