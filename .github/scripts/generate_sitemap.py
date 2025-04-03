@@ -8,13 +8,12 @@ from datetime import datetime
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
 HTML_DIR = "./"
-EXCLUDE_FILES = ['404.html','kamil.html']
-EXCLUDE_DIRS = ['blog', 'experimental']
+EXCLUDE_FILES = ['404.html']
+EXCLUDE_DIRS = ['blog', 'temp']  # নতুন যোগ করা লাইন
 
 def get_last_modified(file_path):
     """Git কমিট বা ফাইল সিস্টেম থেকে ডেট সংগ্রহ"""
     try:
-        # Git থেকে শেষ কমিটের তারিখ
         result = subprocess.run(
             ['git', 'log', '-1', '--pretty=%cI', '--', file_path],
             capture_output=True, text=True
@@ -24,7 +23,6 @@ def get_last_modified(file_path):
     except Exception:
         pass
     
-    # ফাইল মডিফিকেশন ডেট
     mtime = os.path.getmtime(file_path)
     return datetime.utcfromtimestamp(mtime).strftime('%Y-%m-%dT%H:%M:%SZ')
 
@@ -32,15 +30,12 @@ def generate_url(file_path):
     """URL জেনারেশন"""
     relative_path = os.path.relpath(file_path, HTML_DIR)
     
-    # মেইন পেজ (index.html) হ্যান্ডলিং
     if file_path.endswith("index.html"):
         dir_path = os.path.dirname(relative_path)
-        # ডাবল স্ল্যাশ সমস্যা সমাধান
         if dir_path in (".", ""):
             return f"{BASE_URL}/"
         return f"{BASE_URL}/{dir_path}/"
     
-    # সাধারণ পেজ
     url = os.path.splitext(relative_path)[0].replace("\\", "/")
     return f"{BASE_URL}/{url}"
 
@@ -49,23 +44,16 @@ def generate_sitemap():
     urlset = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
     
     for root, dirs, files in os.walk(HTML_DIR):
-    # ১. ডিরেক্টরি ফিল্টার করুন
-    dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
-    
-    # ২. ফাইল প্রসেসিং
-    for file in files:
-        if file in EXCLUDE_FILES or not file.endswith(".html"):
-            continue
-            
-        # ৩. সাইটম্যাপ এন্ট্রি তৈরি
-        full_path = os.path.join(root, file)
-        loc = generate_url(full_path)
-        lastmod = get_last_modified(full_path)
+        # এক্সক্লুডেড ফোল্ডার ফিল্টার (নতুন যোগ করা লাইন)
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
         
-        # ... (বাকি কোড)
-        
+        for file in files:
+            if file in EXCLUDE_FILES or not file.endswith(".html"):
+                continue
+                
+            full_path = os.path.join(root, file)
+            loc = generate_url(full_path)
             
-            # প্রায়োরিটি এবং চেঞ্জফ্রিকোয়েন্সি সেটিং
             is_main_page = loc.endswith('/')
             priority = "1.0" if is_main_page else "0.8"
             changefreq = "weekly"
@@ -76,7 +64,6 @@ def generate_sitemap():
             ET.SubElement(url, 'changefreq').text = changefreq
             ET.SubElement(url, 'priority').text = priority
     
-    # XML ফাইল সেভ
     xml_str = ET.tostring(urlset, encoding='utf-8')
     pretty_xml = minidom.parseString(xml_str).toprettyxml(indent='  ')
     
