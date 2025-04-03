@@ -48,16 +48,21 @@ def generate_sitemap():
     """সাইটম্যাপ জেনারেটর"""
     urlset = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
     
-    for root, _, files in os.walk(HTML_DIR):
-        for file in files:
-            for root, dirs, files in os.walk(HTML_DIR):
-        # এক্সক্লুড ডিরেক্টরি ফিল্টার করুন
-        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
-            if file in EXCLUDE_FILES or not file.endswith(".html"):
-                continue
-                
-            full_path = os.path.join(root, file)
-            loc = generate_url(full_path)
+    for root, dirs, files in os.walk(HTML_DIR):
+    # ১. ডিরেক্টরি ফিল্টার
+    dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+    
+    # ২. ফাইল প্রসেসিং
+    for file in files:
+        # ফাইল ফিল্টার
+        if file in EXCLUDE_FILES or not file.endswith(".html"):
+            continue
+            
+        # সাইটম্যাপ এন্ট্রি তৈরি
+        full_path = os.path.join(root, file)
+        loc = generate_url(full_path)
+        lastmod = get_last_modified(full_path)
+        
             
             # প্রায়োরিটি এবং চেঞ্জফ্রিকোয়েন্সি সেটিং
             is_main_page = loc.endswith('/')
