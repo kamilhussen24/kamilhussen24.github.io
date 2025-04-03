@@ -55,10 +55,6 @@ def generate_sitemap():
             if file in EXCLUDE_FILES or not file.endswith(".html"):
                 continue
                 
-                if any(relative_path.startswith(ex_dir) for ex_dir in EXCLUDE_DIRS):
-                print(f"⏩ এক্সক্লুড ফোল্ডার: {relative_path}")
-                continue
-                
             full_path = os.path.join(root, file)
             loc = generate_url(full_path)
             
