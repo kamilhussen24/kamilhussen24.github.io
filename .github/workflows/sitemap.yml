@@ -1,34 +1,35 @@
-name: Update Sitemap
+name: Auto Update Sitemap
 
 on:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: '0 0 * * *'  # দৈনিক আপডেট
-  workflow_dispatch:
+    - cron: "0 0 * * *"  # প্রতি দিন রাত ১২টায় রান হবে
+
+permissions:
+  contents: write  # Write permission দিন
 
 jobs:
-  build:
+  update-sitemap:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # সম্পূর্ণ Git হিস্ট্রি ফেচ করতে
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - name: Run Sitemap Generator
+        run: python .github/scripts/generate_sitemap.py
 
-    - name: Generate sitemap
-      run: python sitemap_generator.py
-
-    - name: Commit and push changes
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git pull --rebase origin main  # রিমোট পরিবর্তনগুলি ম্যানুয়ালি মার্জ করুন
-        git add sitemap.xml
-        git commit -m "Auto-update sitemap"
-        git push origin main
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add sitemap.xml
+          git commit -m "Auto-update sitemap" || exit 0
+          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/kamilhussen24/kamilhussen24.github.io.git main
