@@ -2,8 +2,8 @@ name: Sitemap Auto Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:     # Manual trigger option
 
 permissions:
   contents: write
@@ -13,19 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout Code
+    - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
-
-    - name: Verify Script Exists
-      run: |
-        echo "Checking for sitemap generator..."
-        ls -la .github/scripts/
-        if [ ! -f .github/scripts/sitemap_generator.py ]; then
-          echo "Error: sitemap_generator.py not found!"
-          exit 1
-        fi
+        fetch-depth: 0  # Required for git history
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -36,13 +27,16 @@ jobs:
       run: pip install xmltodict
 
     - name: Run Sitemap Generator
-      working-directory: .github/scripts
-      run: python sitemap_generator.py --force
+      run: |
+        echo "Current directory: $(pwd)"
+        ls -la .github/scripts/
+        python .github/scripts/generate_sitemap.py
 
-    - name: Commit and Push
+    - name: Commit and Push Changes
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         git add sitemap.xml
-        git commit -m "Updated sitemap [skip ci]" || echo "No changes to commit"
-        git push
+        git commit -m "Auto-updated sitemap [skip ci]" || echo "No changes to commit"
+        git pull --rebase origin main  # Handle any remote changes
+        git push origin main
