@@ -50,7 +50,8 @@ def generate_sitemap():
     
     for root, _, files in os.walk(HTML_DIR):
         for file in files:
-            # ডিরেক্টরি এক্সক্লুড লজিক
+            for root, dirs, files in os.walk(HTML_DIR):
+        # এক্সক্লুড ডিরেক্টরি ফিল্টার করুন
         dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
             if file in EXCLUDE_FILES or not file.endswith(".html"):
                 continue
