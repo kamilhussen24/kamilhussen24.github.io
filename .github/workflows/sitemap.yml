@@ -2,8 +2,8 @@ name: Sitemap Auto Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # দৈনিক রাত ১২টায়
-  workflow_dispatch:  # ম্যানুয়াল রান করার অপশন
+    - cron: '0 0 * * *'  # দৈনিক স্বয়ংক্রিয় আপডেট
+  workflow_dispatch:     # ম্যানুয়ালি যখন ইচ্ছা তখন রান করার অপশন
 
 permissions:
   contents: write
@@ -24,29 +24,19 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Generate Sitemap
-      run: python .github/scripts/sitemap_generator.py
+    - name: Generate Fresh Sitemap
+      run: |
+        # পুরানো সাইটম্যাপ ডিলিট করে সম্পূর্ণ নতুন করে তৈরি
+        rm -f sitemap.xml
+        python .github/scripts/sitemap_generator.py --force
 
-    - name: Commit and Push
+    - name: Force Update Sitemap
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
-        git config --global pull.rebase false
         
-        # শুধু sitemap.xml এর পরিবর্তন চেক
-        if git diff --exit-code --quiet sitemap.xml; then
-          echo "No changes in sitemap.xml"
-          exit 0
-        fi
-
         git add sitemap.xml
-        git commit -m "Auto-updated sitemap [skip ci]"
+        git commit -m "COMPLETE sitemap rebuild [skip ci]"
         
-        # Conflict এড়াতে রিসেট করে নতুন করে কমিট
-        git pull origin main || (
-          git reset --hard origin/main
-          git add sitemap.xml
-          git commit -m "Auto-updated sitemap [skip ci]"
-        )
-        
-        git push origin main
+        # জোর করে পুশ (শুধু sitemap.xml ফাইলটির জন্য)
+        git push origin main --force
