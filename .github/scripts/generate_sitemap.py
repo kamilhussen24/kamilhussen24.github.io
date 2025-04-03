@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from datetime import datetime
 
-# কনফিগারেশন
+# মেইন কনফিগারেশন
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
 HTML_DIR = "./"
