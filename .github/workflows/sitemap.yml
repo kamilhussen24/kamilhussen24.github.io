@@ -1,42 +1,39 @@
-name: Auto Update Sitemap
+name: Auto Sitemap Update
 
 on:
-  push:
-    branches: [main]
   schedule:
-    - cron: "0 0 * * *"  # প্রতিদিন রাত ১২টায়
+    - cron: "0 0 * * *"  # প্রতিদিন রাত ১২টায় UTC
+  workflow_dispatch:     # ম্যানুয়াল রান অপশন
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  update-sitemap:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # সম্পূর্ণ Git হিস্ট্রি পেতে
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-
-      - name: Install Dependencies
-        run: pip install xmltodict
+          python-version: "3.x"
 
       - name: Generate Sitemap
         run: |
-          echo "বর্তমান ডিরেক্টরি: $(pwd)"
-          python .github/scripts/generate_sitemap.py --force
-          ls -la sitemap.xml  # ফাইল এক্সিস্টেন্স চেক করুন
+          python .github/scripts/generate_sitemap.py
+          echo "Generated sitemap.xml content:"
+          cat sitemap.xml
 
-      - name: Commit and Push
+      - name: Commit & Push Changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add sitemap.xml
-          git commit -m "🚀 সাইটম্যাপ আপডেট হয়েছে [skip ci]"
+          git commit -m "🔄 Auto-updated sitemap [skip ci]"
           git pull origin main
           git push origin main
