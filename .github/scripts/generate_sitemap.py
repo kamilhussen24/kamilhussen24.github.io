@@ -1,21 +1,19 @@
 import os
-
-SITEMAP_FILE = "import os
 import time
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
-HTML_FOLDER = "."  # Root directory থেকে শুরু
+HTML_FOLDER = "."  # মূল ফোল্ডার থেকে HTML ফাইল স্ক্যান করবে
 
 def get_all_html_files(directory):
-    """ সব .html ফাইল রিকার্সিভলি খুঁজে বের করে """
+    """ সব .html ফাইল রিকার্সিভলি খুঁজে বের করবে """
     html_files = []
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(".html"):
                 full_path = os.path.join(root, file)
-                relative_path = os.path.relpath(full_path, directory)  # রিলেটিভ পাথ রাখবে
+                relative_path = os.path.relpath(full_path, directory)  # রিলেটিভ পাথ
                 html_files.append(relative_path)
     return html_files
 
@@ -31,6 +29,9 @@ def generate_sitemap():
     html_files = get_all_html_files(HTML_FOLDER)
     
     for file in html_files:
+        if "node_modules" in file or ".git" in file:
+            continue  # অপ্রয়োজনীয় ফোল্ডার বাদ দেওয়া
+        
         url_path = file.replace(".html", "")  # .html সরিয়ে ক্লিন URL বানানো
         url = f"{BASE_URL}/{url_path}"
         lastmod = get_last_modified_date(file)
@@ -49,36 +50,4 @@ def generate_sitemap():
     print("✅ Sitemap.xml আপডেট হয়েছে!")
 
 if __name__ == "__main__":
-    generate_sitemap()"
-BASE_URL = "https://kamilhussen24.github.io"
-
-pages = [
-    "",
-    "about-me",
-    "blog",
-    "blog/post/online-scammer-identify-bangla",
-    "privacy-policy",
-    "terms-of-service"
-]
-
-sitemap_content = '''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-'''
-
-for page in pages:
-    url = f"{BASE_URL}/{page}" if page else BASE_URL
-    sitemap_content += f"""
-    <url>
-        <loc>{url}</loc>
-        <lastmod>{os.popen('date -u +"%Y-%m-%dT%H:%M:%SZ"').read().strip()}</lastmod>
-        <priority>0.8</priority>
-        <changefreq>weekly</changefreq>
-    </url>
-    """
-
-sitemap_content += "\n</urlset>"
-
-with open(SITEMAP_FILE, "w", encoding="utf-8") as f:
-    f.write(sitemap_content)
-
-print("✅ sitemap.xml তৈরি হয়েছে!")
+    generate_sitemap()
