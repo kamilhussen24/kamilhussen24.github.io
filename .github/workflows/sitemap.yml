@@ -18,8 +18,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Get complete git history
-          token: ${{ secrets.GH_PAT }}  # Use PAT for authentication
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -30,17 +29,27 @@ jobs:
         run: python .github/scripts/generate_sitemap.py
 
       - name: Commit and Push Changes
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Using your provided PAT
         run: |
           # Configure Git
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # Pull latest changes to avoid conflicts
-          git pull origin main --rebase
+          # Check for changes in sitemap.xml only
+          if git diff --quiet sitemap.xml; then
+            echo "No changes detected in sitemap.xml"
+            exit 0
+          fi
           
-          # Add and commit sitemap
+          # Stage only sitemap.xml
           git add sitemap.xml
-          git commit -m "Auto-update sitemap [skip ci]" || echo "No changes to commit"
           
-          # Push changes
-          git push origin main
+          # Create commit
+          git commit -m "Auto-update sitemap [skip ci]"
+          
+          # Pull latest changes with merge strategy
+          git pull origin main
+          
+          # Push changes using the PAT
+          git push "https://$GH_TOKEN@github.com/kamilhussen24/kamilhussen24.github.io.git" main
