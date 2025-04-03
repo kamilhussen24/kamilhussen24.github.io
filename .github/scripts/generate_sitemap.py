@@ -4,12 +4,12 @@ import subprocess
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-# 🔹 কনফিগারেশন সেটআপ
+# 🔹 কনফিগারেশন
 SITEMAP_FILE = "sitemap.xml"
 BASE_URL = "https://kamilhussen24.github.io"
 HTML_DIR = "./"  # HTML ফাইল যেখানে আছে
 
-# 🔹 নির্দিষ্ট ফাইলের Git থেকে লাস্ট মডিফাই টাইম বের করা
+# 🔹 নির্দিষ্ট ফাইলের লাস্ট মডিফাই টাইম বের করা (Git থেকে)
 def get_git_last_modified_time(file_path):
     try:
         result = subprocess.run(
@@ -21,10 +21,10 @@ def get_git_last_modified_time(file_path):
     except subprocess.CalledProcessError:
         return None
 
-# 🔹 নতুন সাইটম্যাপ XML তৈরি
+# 🔹 নতুন সাইটম্যাপ তৈরি
 sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
-# 🔹 সমস্ত HTML ফাইল স্ক্যান করা এবং সঠিক লাস্ট মডিফাইড ডেট সেট করা
+# 🔹 সমস্ত HTML ফাইল স্ক্যান করা
 for root, _, files in os.walk(HTML_DIR):
     for file in files:
         if file.endswith(".html"):  
@@ -45,7 +45,7 @@ for root, _, files in os.walk(HTML_DIR):
             url_entry = ET.SubElement(sitemap, "url")
             ET.SubElement(url_entry, "loc").text = url
             ET.SubElement(url_entry, "lastmod").text = last_mod_time
-            ET.SubElement(url_entry, "priority").text = "0.8" if file != "index.html" else "1.0"
+            ET.SubElement(url_entry, "priority").text = "1.0" if "index.html" in file else "0.8"
             ET.SubElement(url_entry, "changefreq").text = "weekly"
 
 # 🔹 XML সুন্দরভাবে ফরম্যাট করা
