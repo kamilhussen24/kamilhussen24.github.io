@@ -32,4 +32,4 @@ sitemap_content += "\n</urlset>"
 with open(SITEMAP_FILE, "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("✅ Sitemap.xml তৈরি হয়েছে!")
+print("✅ sitemap.xml তৈরি হয়েছে!")
