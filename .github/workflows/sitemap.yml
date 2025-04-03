@@ -13,12 +13,13 @@ permissions:
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0  # Get complete git history
+          token: ${{ secrets.GH_PAT }}  # Use PAT for authentication
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -28,31 +29,18 @@ jobs:
       - name: Run Sitemap Generator
         run: python .github/scripts/generate_sitemap.py
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git config --global pull.rebase false  # Explicitly set merge strategy
-
       - name: Commit and Push Changes
         run: |
-          # Check for changes
-          if git diff --quiet sitemap.xml; then
-            echo "No changes detected in sitemap.xml"
-            exit 0
-          fi
-
-          # Stage and commit
+          # Configure Git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Pull latest changes to avoid conflicts
+          git pull origin main --rebase
+          
+          # Add and commit sitemap
           git add sitemap.xml
-          git commit -m "Auto-update sitemap [skip ci]"
-
-          # Pull changes using merge strategy
-          git pull origin main || (
-            echo "Pull failed, resetting and retrying..."
-            git reset --hard origin/main
-            git add sitemap.xml
-            git commit -m "Auto-update sitemap [skip ci]"
-          )
-
+          git commit -m "Auto-update sitemap [skip ci]" || echo "No changes to commit"
+          
           # Push changes
           git push origin main
