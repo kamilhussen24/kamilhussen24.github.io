@@ -16,7 +16,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # সম্পূর্ণ Git হিস্ট্রি পেতে
+          fetch-depth: 0
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -24,16 +25,21 @@ jobs:
           python-version: "3.x"
 
       - name: Generate Sitemap
-        run: |
-          python .github/scripts/generate_sitemap.py
-          echo "Generated sitemap.xml content:"
-          cat sitemap.xml
+        run: python .github/scripts/generate_sitemap.py
 
       - name: Commit & Push Changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git config --global pull.rebase false  # ম্যানুয়াল মার্জ স্ট্র্যাটেজি
+          
+          # স্টেজিং এবং কমিট
           git add sitemap.xml
-          git commit -m "🔄 Auto-updated sitemap [skip ci]"
+          git commit -m "🔄 Auto-updated sitemap [skip ci]" || echo "No changes"
+          
+          # রিমোটের সাথে সিঙ্ক্রোনাইজ
+          git fetch origin main
           git pull origin main
+          
+          # জোরপূর্বক পুশ (সতর্কতার সাথে)
           git push origin main
