@@ -76,6 +76,61 @@
         <link href="css/magnific-popup.css" rel="stylesheet">
 
         <link href="css/kamil-portfolio-style.css" rel="stylesheet">
+
+        <script>
+document.querySelectorAll('.popup-image').forEach(el => {
+    el.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const imgSrc = this.getAttribute('href');
+        const redirectURL = this.getAttribute('data-link');
+
+        // Popup create
+        const popup = document.createElement('div');
+        popup.style.position = 'fixed';
+        popup.style.top = 0;
+        popup.style.left = 0;
+        popup.style.width = '100%';
+        popup.style.height = '100%';
+        popup.style.background = 'rgba(0,0,0,0.8)';
+        popup.style.display = 'flex';
+        popup.style.alignItems = 'center';
+        popup.style.justifyContent = 'center';
+        popup.style.zIndex = 9999;
+
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.style.maxWidth = '90%';
+        img.style.maxHeight = '90%';
+        img.style.boxShadow = '0 0 20px white';
+        img.style.cursor = 'pointer';
+        popup.appendChild(img);
+
+        document.body.appendChild(popup);
+
+        let clickedOnce = false;
+
+        img.addEventListener('click', () => {
+            if (!clickedOnce) {
+                clickedOnce = true;
+                img.style.border = '2px solid white';
+                img.title = 'Click again to visit link';
+            } else {
+                if (redirectURL) {
+                    window.location.href = redirectURL;
+                }
+            }
+        });
+
+        // Popup click outside image will close
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                document.body.removeChild(popup);
+            }
+        });
+    });
+});
+</script>
         
 <!--
 
@@ -502,18 +557,17 @@ Redesign By Kamil Do Not Copy Any Personal Material without permission.
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-12">
-                            <div class="projects-thumb">
-                                <div class="projects-info">
-                                    <small class="projects-tag">Web design</small>
+    <div class="projects-thumb">
+        <div class="projects-info">
+            <small class="projects-tag">Web design</small>
+            <h3 class="projects-title">Sylheti Translator</h3>
+        </div>
 
-                                    <h3 class="projects-title">Sylheti Translator</h3>
-                                </div>
-
-                                <a href="https://sylheti-translator.vercel.app/" class="popup-image">
-                                    <img src="images/projects/sylheti-translator.jpg" class="projects-image img-fluid" alt="">
-                                </a>
-                            </div>
-                        </div>
+        <a href="images/projects/sylheti-translator.jpg" class="popup-image" data-link="https://sylheti-translator.vercel.app/">
+            <img src="images/projects/sylheti-translator.jpg" class="projects-image img-fluid" alt="">
+        </a>
+    </div>
+</div>
 
                         <div class="col-lg-4 col-md-6 col-12">
                             <div class="projects-thumb">
