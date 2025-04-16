@@ -77,53 +77,7 @@
 
         <link href="css/kamil-portfolio-style.css" rel="stylesheet">
 
-        <script>
-document.querySelectorAll('.popup-image').forEach(el => {
-    el.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        const imgSrc = this.getAttribute('href');
-        const redirectURL = this.getAttribute('data-link');
-
-        const popup = document.createElement('div');
-        popup.style.position = 'fixed';
-        popup.style.top = 0;
-        popup.style.left = 0;
-        popup.style.width = '100%';
-        popup.style.height = '100%';
-        popup.style.background = 'rgba(0,0,0,0.8)';
-        popup.style.display = 'flex';
-        popup.style.alignItems = 'center';
-        popup.style.justifyContent = 'center';
-        popup.style.zIndex = 9999;
-
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.style.maxWidth = '90%';
-        img.style.maxHeight = '90%';
-        img.style.boxShadow = '0 0 20px white';
-        popup.appendChild(img);
-
-        document.body.appendChild(popup);
-
-        // যদি লিংক থাকে তাহলে redirect করবে
-        if (redirectURL) {
-            setTimeout(() => {
-                window.location.href = redirectURL;
-            }, 2000);
-
-            popup.addEventListener('click', () => {
-                window.location.href = redirectURL;
-            });
-        } else {
-            // popup ক্লিক করলে বন্ধ হবে
-            popup.addEventListener('click', () => {
-                document.body.removeChild(popup);
-            });
-        }
-    });
-});
-</script>
+        
         
 <!--
 
@@ -556,7 +510,7 @@ Redesign By Kamil Do Not Copy Any Personal Material without permission.
             <h3 class="projects-title">Sylheti Translator</h3>
         </div>
 
-        <a href="images/projects/sylheti-translator.jpg" class="popup-image" data-link="https://sylheti-translator.vercel.app/">
+        <a href="https://sylheti-translator.vercel.app/">
             <img src="images/projects/sylheti-translator.jpg" class="projects-image img-fluid" alt="">
         </a>
     </div>
