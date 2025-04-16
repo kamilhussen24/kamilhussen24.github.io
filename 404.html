@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page Not Found - Kamil Hussen</title>
+  <style>
+    :root {
+      --primary-color: #007BFF;
+      --accent-color: #ff4c4c;
+      --bg-color: #f9f9f9;
+      --text-color: #333;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .container h1 {
+      font-size: 6rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+    }
+    .container p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+    .container a {
+      display: inline-block;
+      padding: 14px 30px;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+    .container a:hover {
+      background-color: #0056b3;
+    }
+    @media (max-width: 600px) {
+      .container h1 {
+        font-size: 4rem;
+      }
+      .container p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>404</h1>
+    <p>Oops! The page you're looking for doesn't exist.</p>
+    <a href="/">Back to Home</a>
+  </div>
+</body>
+</html>
