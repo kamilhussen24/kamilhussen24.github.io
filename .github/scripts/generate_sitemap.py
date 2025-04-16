@@ -12,7 +12,7 @@ EXCLUDE_FILES = ['404.html','kamil.html']
 EXCLUDE_DIRS = ['test', 'temp']  # নতুন যোগ করা লাইন
 
 def get_last_modified(file_path):
-    """Git কমিট বা ফাইল সিস্টেম থেকে ডেট সংগ্রহ"""
+    """Git কমিট বা ফাইল সিস্টেম থেকে ডেট সংগ্রহ করবে"""
     try:
         result = subprocess.run(
             ['git', 'log', '-1', '--pretty=%cI', '--', file_path],
