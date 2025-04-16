@@ -85,7 +85,6 @@ document.querySelectorAll('.popup-image').forEach(el => {
         const imgSrc = this.getAttribute('href');
         const redirectURL = this.getAttribute('data-link');
 
-        // Popup create
         const popup = document.createElement('div');
         popup.style.position = 'fixed';
         popup.style.top = 0;
@@ -103,31 +102,25 @@ document.querySelectorAll('.popup-image').forEach(el => {
         img.style.maxWidth = '90%';
         img.style.maxHeight = '90%';
         img.style.boxShadow = '0 0 20px white';
-        img.style.cursor = 'pointer';
         popup.appendChild(img);
 
         document.body.appendChild(popup);
 
-        let clickedOnce = false;
+        // যদি লিংক থাকে তাহলে redirect করবে
+        if (redirectURL) {
+            setTimeout(() => {
+                window.location.href = redirectURL;
+            }, 2000);
 
-        img.addEventListener('click', () => {
-            if (!clickedOnce) {
-                clickedOnce = true;
-                img.style.border = '2px solid white';
-                img.title = 'Click again to visit link';
-            } else {
-                if (redirectURL) {
-                    window.location.href = redirectURL;
-                }
-            }
-        });
-
-        // Popup click outside image will close
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup) {
+            popup.addEventListener('click', () => {
+                window.location.href = redirectURL;
+            });
+        } else {
+            // popup ক্লিক করলে বন্ধ হবে
+            popup.addEventListener('click', () => {
                 document.body.removeChild(popup);
-            }
-        });
+            });
+        }
     });
 });
 </script>
