@@ -77,44 +77,7 @@
 
         <link href="css/kamil-portfolio-style.css" rel="stylesheet">
 
-        <script>
-document.querySelectorAll('.click-scroll').forEach(link => {
-  link.addEventListener('click', function(e) {
-    const href = this.getAttribute('href');
-
-    // Try to detect full URL (for external link detection)
-    let isExternal = false;
-    try {
-      const url = new URL(href, window.location.href);
-      if (url.hostname !== window.location.hostname) {
-        isExternal = true;
-      }
-    } catch (error) {
-      // fallback for anchor links like "#section_1"
-    }
-
-    // যদি বাইরের লিংক হয় → ডিফল্টভাবে কাজ করতে দাও
-    if (isExternal) return;
-
-    // এখন এটাই ভেতরের লিংক, scroll & active কাজ করুক
-    if (href.startsWith('#')) {
-      e.preventDefault();
-
-      // সব active class সরাও
-      document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
-
-      // active class বসাও
-      this.classList.add('active');
-
-      // স্ক্রল করাও
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  });
-});
-</script>
+        
         
 <!--
 
