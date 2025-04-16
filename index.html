@@ -77,7 +77,31 @@
 
         <link href="css/kamil-portfolio-style.css" rel="stylesheet">
 
-        
+        <script>
+document.querySelectorAll('.click-scroll').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+
+    // Check: ভেতরের section কিনা
+    if (href.startsWith('#')) {
+      e.preventDefault();
+
+      // সব nav-link থেকে active ক্লাস সরানো
+      document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+
+      // ক্লিক করা মেনুতে active ক্লাস বসানো
+      this.classList.add('active');
+
+      // স্ক্রল করা
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    // বাইরের লিংক হলে কিছুই করো না → ডিফল্টভাবে কাজ করবে
+  });
+});
+</script>
         
 <!--
 
@@ -153,9 +177,8 @@ Redesign By Kamil Do Not Copy Any Personal Material without permission.
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="https://kamilhussen24.github.io/about-me">
-    <i class="fa fa-user-circle"></i> About</a>
-                        </li>
+    <a class="nav-link click-scroll" href="https://kamilhussen24.github.io/about-me"><i class="fa fa-user-circle"></i> About</a>
+  </li>
 
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_4"><i class="fa fa-handshake"></i> Services</a>
