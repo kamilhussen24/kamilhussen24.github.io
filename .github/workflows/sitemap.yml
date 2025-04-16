@@ -2,7 +2,7 @@ name: Auto Sitemap Update
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # প্রতিদিন রাত ১২টায়
+    - cron: "0 0 * * *"  # প্রতিদিন রাত ১২টায় চলবে
   workflow_dispatch:     # ম্যানুয়াল রান অপশন
 
 permissions:
