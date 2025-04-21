@@ -41,8 +41,16 @@ def generate_url(file_path):
 
 def generate_sitemap():
     """সাইটম্যাপ জেনারেটর"""
-    urlset = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-    
+    urlset = ET.Element(
+        'urlset',
+        {
+            'xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:schemaLocation': 'http://www.sitemaps.org/schemas/sitemap/0.9 '
+                                  'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'
+        }
+    )
+
     for root, dirs, files in os.walk(HTML_DIR):
         # এক্সক্লুডেড ফোল্ডার ফিল্টার (নতুন যোগ করা লাইন)
         dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
