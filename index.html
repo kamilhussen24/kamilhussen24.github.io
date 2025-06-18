@@ -60,106 +60,230 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#00ccff">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
-  <!--  New Portfolio Invite Popup Structure -->
-<div id="popup" class="popup-overlay">
-  <div class="popup-content">
-    <h2>🚀 Check Out My New Portfolio!</h2>
-    <p>I've launched a brand-new, upgraded portfolio. Want to take a look?</p>
-    <div class="popup-actions">
-      <a href="https://portfolio.kamildex.com/" target="_blank" class="btn-visit">Visit Now</a>
-      <button class="btn-close" onclick="closePopup()">No Thanks</button>
+<!-- Poup-Invite -->
+  <style>
+    /* Unique Popup Styles - All classes prefixed with 'pprn-' */
+    .pprn-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    .pprn-container-active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .pprn-content {
+      background-color: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      transform: translateY(20px);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      margin: 20px;
+    }
+
+    .pprn-container-active .pprn-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .pprn-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f9f9f9;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .pprn-title {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .pprn-close-btn {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #777;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .pprn-close-btn:hover {
+      color: #333;
+    }
+
+    .pprn-body {
+      padding: 22px 20px;
+    }
+
+    .pprn-message {
+      margin: 0 0 22px;
+      color: #555;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .pprn-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pprn-primary-btn, .pprn-secondary-btn {
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex: 1;
+      text-align: center;
+      font-size: 0.9rem;
+      min-width: 120px;
+    }
+
+    .pprn-primary-btn {
+      background-color: #00BA87;
+      color: white;
+      border: none;
+    }
+
+    .pprn-primary-btn:hover {
+      background-color: #009a72;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 186, 135, 0.3);
+    }
+
+    .pprn-secondary-btn {
+      background-color: transparent;
+      border: 1px solid #ddd;
+      color: #666;
+    }
+
+    .pprn-secondary-btn:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .pprn-content {
+        width: 95%;
+      }
+      
+      .pprn-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .pprn-primary-btn, .pprn-secondary-btn {
+        width: 100%;
+      }
+      
+      .pprn-title {
+        font-size: 1.15rem;
+      }
+      
+      .pprn-message {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+  <!-- Add this div anywhere in your old portfolio's body -->
+  <div id="pprn-popup" class="pprn-container">
+    <div class="pprn-content">
+      <div class="pprn-header">
+        <h3 class="pprn-title">Discover My Updated Portfolio!</h3>
+        <button class="pprn-close-btn">&times;</button>
+      </div>
+      <div class="pprn-body">
+        <p class="pprn-message">You're viewing my old portfolio. Check out my completely redesigned portfolio with my latest projects and enhanced features!</p>
+        <div class="pprn-buttons">
+          <a href="https://portfolio.kamildex.com/" class="pprn-primary-btn">Visit Now</a>
+          <button class="pprn-secondary-btn">Not Now</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- 🟢 CSS: Styling -->
-<style>
-  .popup-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .popup-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: fadeIn 0.3s ease;
-  }
-
-  .popup-content h2 {
-    color: #00BA87;
-    margin-bottom: 10px;
-  }
-
-  .popup-content p {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-
-  .popup-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-visit {
-    background-color: #00BA87;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.3s;
-  }
-
-  .btn-visit:hover {
-    background-color: #009e72;
-  }
-
-  .btn-close {
-    background-color: transparent;
-    border: 1px solid #ccc;
-    color: #444;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .btn-close:hover {
-    border-color: #888;
-    color: #111;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-</style>
-
-<!-- 🟢 JavaScript: Logic -->
-<script>
-  setTimeout(() => {
-    const popup = document.getElementById("popup");
-    popup.style.display = "flex";
-  }, 15000); // 15 seconds
-
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
-</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const pprnPopup = document.getElementById('pprn-popup');
+      const pprnCloseBtn = document.querySelector('.pprn-close-btn');
+      const pprnSecondaryBtn = document.querySelector('.pprn-secondary-btn');
+      
+      // Check if cookie exists to prevent showing popup
+      if (getCookie('pprn_shown') !== 'true') {
+        // Show popup after 15 seconds (15000 milliseconds)
+        setTimeout(function() {
+          pprnPopup.classList.add('pprn-container-active');
+        }, 15000);
+      }
+      
+      // Close popup when clicking close button or secondary button
+      pprnCloseBtn.addEventListener('click', closePprnPopup);
+      pprnSecondaryBtn.addEventListener('click', function() {
+        closePprnPopup();
+        // Set cookie for 5 days when "Not Now" is clicked
+        setCookie('pprn_shown', 'true', 3);
+      });
+      
+      // Close popup when clicking outside content
+      pprnPopup.addEventListener('click', function(e) {
+        if (e.target === pprnPopup) {
+          closePprnPopup();
+        }
+      });
+      
+      function closePprnPopup() {
+        pprnPopup.classList.remove('pprn-container-active');
+      }
+      
+      // Cookie functions
+      function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+      }
+      
+      function getCookie(name) {
+        const cookieName = name + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookieArray = decodedCookie.split(';');
+        for(let i = 0; i < cookieArray.length; i++) {
+          let cookie = cookieArray[i];
+          while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
+          }
+          if (cookie.indexOf(cookieName) === 0) {
+            return cookie.substring(cookieName.length, cookie.length);
+          }
+        }
+        return "";
+      }
+    });
+  </script>
 
         <!-- CSS FILES -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
