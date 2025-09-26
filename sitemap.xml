@@ -7,6 +7,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://kamilhussen24.github.io/</loc>
+    <lastmod>2025-06-21T22:42:46+06:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
     <loc>https://kamilhussen24.github.io/terms-of-service</loc>
     <lastmod>2025-04-03T19:48:20+06:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -17,11 +23,5 @@
     <lastmod>2025-06-26T22:20:59+06:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kamilhussen24.github.io/</loc>
-    <lastmod>2025-06-21T22:42:46+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
   </url>
 </urlset>
