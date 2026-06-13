@@ -80,28 +80,63 @@
 
 		.navbar {
 			background-color: #00BA87;
-			padding: 10px 16px;
+			padding: 10px 20px;
 			position: fixed;
 			width: 100%;
 			top: 0;
 			z-index: 1000;
 			display: flex;
 			align-items: center;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.15);
 		}
 
-		.navbar a {
+		.navbar-brand {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			text-decoration: none;
+		}
+
+		.navbar-brand img {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			border: 2px solid white;
+			object-fit: cover;
+			box-shadow: 0 0 8px rgba(255,255,255,0.6);
+		}
+
+		.navbar-brand span {
+			color: white;
+			font-size: 16px;
+			font-weight: bold;
+			letter-spacing: 0.5px;
+			text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+		}
+
+		.navbar-links {
+			margin-left: auto;
+			display: flex;
+			gap: 8px;
+		}
+
+		.navbar-links a {
 			text-decoration: none;
 			color: white;
-			padding: 10px 20px;
-			border-radius: 5px;
+			background: transparent;
+			padding: 8px 16px;
+			border-radius: 6px;
 			transition: all 0.3s ease;
-			font-weight: bold;
 			font-size: 14px;
+			font-weight: bold;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 		}
 
-		.navbar a.blog { margin-left: auto; }
-
-		.navbar a:hover { background: rgba(255,255,255,0.15); }
+		.navbar-links a:hover {
+			background: rgba(255,255,255,0.15);
+			color: white;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+		}
 
 		.container {
 			max-width: 700px;
@@ -201,8 +236,14 @@
 <body>
 
 	<div class="navbar">
-		<a href="https://kamilhussen24.github.io/">Home</a>
-		<a href="https://kamilhussen24.vercel.app/blog" class="blog">Blog</a>
+		<a href="https://kamilhussen24.github.io/" class="navbar-brand">
+			<img src="https://raw.githubusercontent.com/kamilhussen24/kamilhussen24.github.io/refs/heads/main/images/kamil-hussen.jpg" alt="Kamil Hussen">
+			<span>Kamil Hussen</span>
+		</a>
+		<div class="navbar-links">
+			<a href="https://kamilhussen24.github.io/">Home</a>
+			<a href="https://kamilhussen24.vercel.app/blog">Blog</a>
+		</div>
 	</div>
 
 	<div class="container">
